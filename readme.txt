@@ -2,6 +2,7 @@ nc -lp port (remote )
 nc ip port -e cmd.exe (local)
 after ctrl+c  cmd.exe no exit,socket no shutdown,remote's nc no exit!
 it is a bug!so write netcat 1.12.
+only modify doexec.c 
 
 Netcat 1.12 for NT 
 UPDATE 04/20/2013 by chenghao0511@gmail.com  [ctrl+c]
