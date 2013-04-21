@@ -111,7 +111,7 @@ CreateSession(
                           &SecurityAttributes, 0);
     if (!Result) {
         holler("Failed to create shell stdout pipe, error = %s",
-  		itoa(GetLastError(), smbuff, 10), NULL, NULL, NULL, NULL, NULL);
+			itoa(GetLastError(), smbuff, 10), NULL, NULL, NULL, NULL, NULL);
         goto Failure;
     }
     Result = CreatePipe(&ShellStdinPipe, &Session->WritePipeHandle,
@@ -273,13 +273,13 @@ doexec(
     // Close my handles to the threads, the shell process, and the shell pipes
 	shutdown(Session->ClientSocket, SD_BOTH);
   	closesocket(Session->ClientSocket);
-//printf ("closesocket  %d\n",Session->ClientSocket); printf ("\n"); fflush (stdout); 
+
 
 	
-	DisconnectNamedPipe(Session->ReadPipeHandle);
+    DisconnectNamedPipe(Session->ReadPipeHandle);
     CloseHandle(Session->ReadPipeHandle);
 
-	DisconnectNamedPipe(Session->WritePipeHandle);
+    DisconnectNamedPipe(Session->WritePipeHandle);
     CloseHandle(Session->WritePipeHandle);
 
 
@@ -287,6 +287,7 @@ doexec(
     CloseHandle(Session->WriteShellThreadHandle);
  
     CloseHandle(Session->ProcessHandle);
+    //printf ("CloseHandle ProcessHandle success! \n");
  
     free(Session);
 
@@ -302,50 +303,35 @@ BOOL ConsoleHandler(DWORD CEvent)
 switch(CEvent)
 {
 case CTRL_C_EVENT:
-	shutdown(Session->ClientSocket,SD_BOTH);
-  	closesocket(Session->ClientSocket);
-	
-	DisconnectNamedPipe(Session->ReadPipeHandle);
-    CloseHandle(Session->ReadPipeHandle);
-
-	DisconnectNamedPipe(Session->WritePipeHandle);
-    CloseHandle(Session->WritePipeHandle);
-
-    CloseHandle(Session->ReadShellThreadHandle);
-    CloseHandle(Session->WriteShellThreadHandle);
 
 TerminateProcess(Session->ProcessHandle,0);
- 
-    free(Session);
+
+
     return(TRUE);
 break;
 case CTRL_BREAK_EVENT:
-shutdown(Session->ClientSocket,SD_BOTH);
-  	closesocket(Session->ClientSocket);
+
 TerminateProcess(Session->ProcessHandle,0);
-    free(Session);
+
     return(TRUE);
 
 break;
 case CTRL_CLOSE_EVENT:
-shutdown(Session->ClientSocket, SD_BOTH);
-  	closesocket(Session->ClientSocket);
+
 TerminateProcess(Session->ProcessHandle,0);
-    free(Session);
+
     return(TRUE);
 break;
 case CTRL_LOGOFF_EVENT:
-shutdown(Session->ClientSocket, SD_BOTH);
-  	closesocket(Session->ClientSocket);
+
 TerminateProcess(Session->ProcessHandle,0);
-    free(Session);
+
     return(TRUE);
 break;
 case CTRL_SHUTDOWN_EVENT:
-shutdown(Session->ClientSocket, SD_BOTH);
-  	closesocket(Session->ClientSocket);
+
 TerminateProcess(Session->ProcessHandle,0);
-    free(Session);
+
     return(TRUE);
 break;
 
@@ -395,7 +381,7 @@ StartShell(
                     GetCurrentProcess(), &si.hStdError,
                     DUPLICATE_SAME_ACCESS, TRUE, 0);
 
-   // if (CreateProcess(NULL, pr00gie, NULL, NULL, TRUE, CREATE_NEW_PROCESS_GROUP, NULL, NULL,
+    //no matter if (CreateProcess(NULL, pr00gie, NULL, NULL, TRUE, CREATE_NEW_PROCESS_GROUP, NULL, NULL,  
     if (CreateProcess(NULL, pr00gie, NULL, NULL, TRUE, 0, NULL, NULL,
                       &si, &ProcessInformation)) 
     {
@@ -405,7 +391,7 @@ if (SetConsoleCtrlHandler((PHANDLER_ROUTINE)ConsoleHandler,TRUE)==FALSE)
 // unable to install handler
 // display message to the user
 printf("Unable to install handler!\n");
-return -1;
+return NULL;
 } 
 
         ProcessHandle = ProcessInformation.hProcess;
