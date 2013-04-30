@@ -1,0 +1,66 @@
+update netcat 1.11 to 1.12
+
+why?
+
+nc -lp port (remote )
+nc ip port -e cmd.exe (local)
+after ctrl+c cmd.exe no exit,socket no shutdown,remote's nc no exit!
+it is a bug!so write netcat 1.12.
+only modify doexec.c
+
+Netcat 1.12 for NT
+UPDATE 04/20/2013 by chenghao0511@gmail.com [ctrl+c]
+
+how to update:in doexec.c
+
++BOOL ConsoleHandler(DWORD CEvent)
++{
++switch(CEvent)
++{
++case CTRL_C_EVENT:
++    TerminateProcess(Session->ProcessHandle,0);
++    return(TRUE);
++break;
++case CTRL_BREAK_EVENT:
++    TerminateProcess(Session->ProcessHandle,0);
++    return(TRUE);
++break;
++case CTRL_CLOSE_EVENT:
++    TerminateProcess(Session->ProcessHandle,0);
++    return(TRUE);
++break;
++case CTRL_LOGOFF_EVENT:
++    TerminateProcess(Session->ProcessHandle,0);
++    return(TRUE);
++break;
++case CTRL_SHUTDOWN_EVENT:
++    TerminateProcess(Session->ProcessHandle,0);
++    return(TRUE);
++break;
++}
++return TRUE;
++}
+
+
+    if (CreateProcess(NULL, pr00gie, NULL, NULL, TRUE, 0, NULL, NULL,
+                      &si, &ProcessInformation)) 
+    {
++  if (SetConsoleCtrlHandler((PHANDLER_ROUTINE)ConsoleHandler,TRUE)==FALSE)
++	{
++	  printf("Unable to install handler!\n");
++	  return NULL;
++	} 
+
+        ProcessHandle = ProcessInformation.hProcess;
+        CloseHandle(ProcessInformation.hThread);
+    } 
+    else 
+        holler("Failed to execute shell, error = %s", 
+			itoa(GetLastError(), smbuff, 10), NULL, NULL, NULL, NULL, NULL);
+
+
+    return(ProcessHandle);
+}
+
+https://github.com/chenghao11/netcat-1.12/wiki/update-netcat-1.11-to-1.12
+
