@@ -1,0 +1,28 @@
+update netcat 1.12 to 1.13
+
+why?
+
+modify by chenghao0511@gmail.com 2013/04/30
+
+netcat -C ip port same as netcat -L -p port
+
+how to update:
+
+-   while ((x = getopt (argc, argv, "ade:g:G:hi:lLno:p:rs:tuvw:z")) != EOF) {
++   while ((x = getopt (argc, argv, "aCde:g:G:hi:lLno:p:rs:tuvw:z")) != EOF) {
+
+#ifdef WIN32
+    WSACleanup(); 
+#endif
+
+    if (cycle == 1)
+		goto recycle;
+
+changed to：
+
+  	if (cycle == 1)
+		goto recycle;
+
+#ifdef WIN32
+    WSACleanup(); 
+#endif
