@@ -11,6 +11,11 @@ how to update:
 -   while ((x = getopt (argc, argv, "ade:g:G:hi:lLno:p:rs:tuvw:z")) != EOF) {
 +   while ((x = getopt (argc, argv, "aCde:g:G:hi:lLno:p:rs:tuvw:z")) != EOF) {
 
++	        case 'C':				/* connect then cycle back to start instead of exiting */
++  	cycle = 1;
++	  break;
+
+
 #ifdef WIN32
     WSACleanup(); 
 #endif
