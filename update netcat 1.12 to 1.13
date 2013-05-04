@@ -2,7 +2,7 @@ update netcat 1.12 to 1.13
 
 why?
 
-modify by chenghao0511@gmail.com 2013/04/30
+modify by chenghao0511##gmail.com 2013/04/30
 
 netcat -C ip port same as netcat -L -p port
 
