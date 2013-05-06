@@ -1,0 +1,64 @@
+update netcat 1.13 to 1.14
+
+modify by chenghao0511##gmail.com 2013/05/03
+
+why?
+
+after:
+remote:nc -lp 55 < doexec.c
+local:nc ip 55 > test.c
+
+remote:nc -lp 55 < doexec.c
+_         [can not type in]
+local:nc ip 55 > test.c
+_         [can type in,remote out]
+
+you can use:
+nc -lp 66 < doexec.c
+nc -C 127.0.0.1 66 >test.c
+or:
+nc -lp 66 > test1.c
+nc -C 127.0.0.1 66 < doexec.c
+
+how to update:
+
+unsigned int o_wait = 0;
+USHORT o_zero = 0;
++USHORT o_connect = 0;
+
+
+  rr = recv (fd, bigbuf_net, BIGSIZ, 0);
+
+	if (rr <= 0) {
+
+Debug (("recv rr <= 0 "))
++	  if (_isatty( 1 ) == 0) 		/* > recv = 0,fix by chenghao0511#gmail.com*/
++	    exit(0);
+	  FD_CLR (fd, ding1);		/* net closed, we'll finish up... */
+
+
+		rr = read (0, bigbuf_in, BIGSIZ);
+		if (rr <= 0) {			/* at end, or fukt, or ... */
+			close (0);
+
++  			shutdown(fd, 0x02);  	/* by chenghao0511 */
++  			closesocket (fd);
++			if(o_connect)
++			  exit(0);
++  			return (0);
+		} else {
+			rzleft = rr;
+			zp = bigbuf_in;
+
+	        case 'C':			/* connect then cycle back to start instead of exiting */
++	o_connect = 1;
+  	cycle = 1;
+	  break;
+
+source code:
+https://github.com/chenghao11/netcat-1.13/wiki/update-netcat-1.12-to-1.13
+http://code.google.com/p/netcat113/
+https://sourceforge.net/p/netcat113/
+download:
+https://www.box.com/s/vmrli1vjt5dh4j0bjarr
+https://docs.google.com/file/d/0B0LORKrOvywuOUdvSGo4ZHNEb28/edit?usp=sharing
