@@ -1,0 +1,67 @@
+update netcat 1.14 to 1.15
+
+modify by chenghao0511#gmail.com 2013/05/11
+
+why?
+
+netcat 1.14 can not support : 
+nc -u -lp port -e cmd.exe
+nc -u ip port
+
+
+how to update:(in doexec.c in SessionWriteShellThreadFn)
+
+
+-    BYTE    RecvBuffer[1];
+
++    BYTE    RecvBuffer[8192];
+
+-     BYTE    Buffer[BUFFER_SIZE];
+
+-    while (recv(Session->ClientSocket, RecvBuffer, sizeof(RecvBuffer), 0) != 0) {
+
++    while ((BufferCnt = recv(Session->ClientSocket, RecvBuffer, sizeof(RecvBuffer), 0)) != 0) {
+
+-        Buffer[BufferCnt++] = RecvBuffer[0];
+
+-        if (RecvBuffer[0] == '\r')
+-                Buffer[BufferCnt++] = '\n';
+
+  	// Trap exit as it causes problems
+-		if (strnicmp(Buffer, "exit\n", 5) == 0)
+-			ExitThread(0);
+
+
+
+        //
+        // If we got a CR, it's time to send what we've buffered up down to the
+        // shell process.
+        // SECURITY FIX: CW 12/27/04 Add BufferCnt size check.  If we hit end of buffer, flush it
+        if (RecvBuffer[0] == '\n' || RecvBuffer[0] == '\r' || BufferCnt > BUFFER_SIZE-1) {
+            if (! WriteFile(Session->WritePipeHandle, Buffer, BufferCnt, 
+                            &BytesWritten, NULL))
+            {
+                break;
+            }
+            BufferCnt = 0;
+        }
+
+
+changed to：
+
+        //if (RecvBuffer[0] == '\n' || RecvBuffer[0] == '\r' || BufferCnt > BUFFER_SIZE-1) {
+            if (! WriteFile(Session->WritePipeHandle, RecvBuffer, BufferCnt, 
+                            &BytesWritten, NULL))
+            {
+                break;
+            }
+            BufferCnt = 0;
+        //}
+
+source code:
+https://github.com/chenghao11/netcat-1.13/wiki/update-netcat-1.12-to-1.13
+http://code.google.com/p/netcat113/
+https://sourceforge.net/p/netcat113/
+download:
+https://www.box.com/s/vmrli1vjt5dh4j0bjarr
+https://docs.google.com/file/d/0B0LORKrOvywuOUdvSGo4ZHNEb28/edit?usp=sharing
